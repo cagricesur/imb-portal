@@ -2,6 +2,7 @@ import { routeTree } from "@imb-portal/routeTree.gen";
 import { theme } from "@imb-portal/theme";
 import { LoadingOverlay, MantineProvider } from "@mantine/core";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
+import { useColorSchemeCookieManager } from "@imb-portal/utils";
 
 import "@mantine/carousel/styles.css";
 import "@mantine/charts/styles.css";
@@ -39,8 +40,14 @@ const router = createRouter({
 });
 
 const App: React.FunctionComponent = () => {
+  const colorSchemeCookieManager = useColorSchemeCookieManager();
+
   return (
-    <MantineProvider theme={theme} defaultColorScheme="dark">
+    <MantineProvider
+      theme={theme}
+      defaultColorScheme="dark"
+      colorSchemeManager={colorSchemeCookieManager}
+    >
       <RouterProvider
         router={router}
         context={{ authState: { authenticated: false } }}

@@ -1,21 +1,6 @@
+import Login from "@imb-portal/views/Login";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/login")({
-  component: RouteComponent,
+  component: Login,
 });
-
-function RouteComponent() {
-  const nav = Route.useNavigate();
-  return (
-    <div>
-      <span>Hello "/auth"!</span>
-      <button
-        onClick={() => {
-          nav({ to: "/" });
-        }}
-      >
-        Login
-      </button>
-    </div>
-  );
-}
