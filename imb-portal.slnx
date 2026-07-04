@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/App/" />
+  <Folder Name="/Web/">
+    <Project Path="Web/IMBP.Web.Client/IMBP.Web.Client.esproj">
+      <Build />
+      <Deploy />
+    </Project>
+    <Project Path="Web/IMBP.Web.Server/IMBP.Web.Server.csproj" />
+  </Folder>
+</Solution>
