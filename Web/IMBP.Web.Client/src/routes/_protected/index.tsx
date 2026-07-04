@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_protected/")({
   component: RouteComponent,
 });
 
@@ -11,10 +11,10 @@ function RouteComponent() {
       <span>Hello "/"!</span>
       <button
         onClick={() => {
-          nav({ to: "/home" });
+          nav({ to: "/login" });
         }}
       >
-        Login
+        Logout
       </button>
     </div>
   );

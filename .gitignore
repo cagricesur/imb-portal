@@ -414,6 +414,10 @@ psd
 thumb
 sketch
 
+### custom ###
+**/.tanstack/
+**/dist/
+
 ### VisualStudioCode ###
 !.vscode/*.code-snippets
 
