@@ -1,5 +1,9 @@
 <Solution>
-  <Folder Name="/App/" />
+  <Folder Name="/App/">
+    <Project Path="App/IMBP.App.Core/IMBP.App.Core.csproj" Id="421de84e-7842-41bb-bd38-f52fe7dcf96f" />
+    <Project Path="App/IMBP.App.Domain/IMBP.App.Domain.csproj" Id="8bec607b-673f-4d09-bd8b-82d7d15bcf67" />
+    <Project Path="App/IMBP.App.Infrastructure/IMBP.App.Infrastructure.csproj" Id="a69d0faa-9cd4-4e1f-8f9c-757d1795562b" />
+  </Folder>
   <Folder Name="/Web/">
     <Project Path="Web/IMBP.Web.Client/IMBP.Web.Client.esproj">
       <Build />
