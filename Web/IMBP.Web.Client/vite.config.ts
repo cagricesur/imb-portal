@@ -1,7 +1,7 @@
 import { fileURLToPath, URL } from "node:url";
-
+import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import { defineConfig } from "vite";
-import plugin from "@vitejs/plugin-react";
+import react from "@vitejs/plugin-react";
 import fs from "fs";
 import path from "path";
 import child_process from "child_process";
@@ -47,17 +47,22 @@ const target = env.ASPNETCORE_HTTPS_PORT
     ? env.ASPNETCORE_URLS.split(";")[0]
     : "https://localhost:7101";
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [plugin()],
+  plugins: [
+    tanstackRouter({
+      target: "react",
+      autoCodeSplitting: true,
+    }),
+    react(),
+  ],
   resolve: {
     alias: {
-      "@": fileURLToPath(new URL("./src", import.meta.url)),
+      "@imb-portal": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
   server: {
     proxy: {
-      "^/weatherforecast": {
+      "^/api": {
         target,
         secure: false,
       },
