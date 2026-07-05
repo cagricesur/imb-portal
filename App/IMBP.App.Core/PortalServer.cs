@@ -2,16 +2,12 @@
 using IMBP.App.Domain.Settings;
 using IMBP.App.Domain.Specifications;
 using IMBP.App.Infrastructure;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
-using System.Text;
 using System.Text.Json.Serialization;
 
 namespace IMBP.App.Core
@@ -34,47 +30,10 @@ namespace IMBP.App.Core
             });
             builder.Services.AddOpenApi();
 
-            builder.ConfigurePortalSettings(out var jwtSettings);
+            builder.ConfigurePortalSettings();
             builder.ConfigurePortalContext();
             builder.ConfigurePortalServices();
 
-            builder.Services.Configure<ForwardedHeadersOptions>(options =>
-            {
-                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-            });
-
-            builder.Services
-            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
-            {
-                options.Events = new JwtBearerEvents
-                {
-                    OnMessageReceived = context =>
-                    {
-                        var accessToken = context.Request.Query["access_token"];
-                        var path = context.HttpContext.Request.Path;
-
-                        if (!string.IsNullOrEmpty(accessToken) &&
-                            path.StartsWithSegments("/hubs/portal"))
-                        {
-                            context.Token = accessToken;
-                        }
-
-                        return Task.CompletedTask;
-                    }
-                };
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),
-                    ValidIssuer = jwtSettings.Issuer,
-                    ValidAudience = jwtSettings.Audience,
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ClockSkew = TimeSpan.FromMinutes(2),
-                };
-            });
 
             var app = builder.Build();
 
@@ -95,7 +54,6 @@ namespace IMBP.App.Core
 
             app.MapControllers();
 
-            app.MapHub<PortalHub>("/hubs/portal");
             app.MapFallbackToFile("/index.html");
 
             app.Run();
@@ -112,21 +70,10 @@ namespace IMBP.App.Core
                 options.UseSqlServer(builder.Configuration.GetConnectionString("PortalContext"));
             });
         }
-        internal static void ConfigurePortalSettings(this WebApplicationBuilder builder, out JwtSettings jwtSettings)
+        internal static void ConfigurePortalSettings(this WebApplicationBuilder builder)
         {
             builder.Services.AddMemoryCache(options => builder.Configuration.GetSection("MemoryCache").Bind(options));
-            var jwtSection = builder.Configuration.GetSection(JwtSettings.Section);
-            builder.Services
-                   .Configure<JwtSettings>(jwtSection);
-
-            jwtSettings = new JwtSettings()
-            {
-                Audience = "",
-                Expiration = 0,
-                Issuer = "",
-                Secret = ""
-            };
-            jwtSection.Bind(jwtSettings);
+            builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection(JwtSettings.Section));
         }
         internal static void ConfigurePortalServices(this WebApplicationBuilder builder)
         {
