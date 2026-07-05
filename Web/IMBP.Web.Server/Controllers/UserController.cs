@@ -6,7 +6,7 @@ using IMBP.App.Domain.Models;
 
 namespace IMBP.Web.Server.Controllers
 {
-    public class UserController(IUserService userService) : WebController
+    public class UserController(IUserService userService) : PortalController
     {
         [HttpPost]
         [Route("authenticate")]

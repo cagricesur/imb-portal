@@ -45,7 +45,7 @@ const App: React.FunctionComponent = () => {
   return (
     <MantineProvider
       theme={theme}
-      defaultColorScheme="dark"
+      defaultColorScheme="light"
       colorSchemeManager={colorSchemeCookieManager}
     >
       <RouterProvider
