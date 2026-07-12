@@ -72,6 +72,7 @@ namespace IMBP.App.Core
         {
             builder.Services
                    .AddSingleton<ICacheService, CacheService>()
+                   .AddScoped<ITranslationService, TranslationService>()
                    .AddScoped<IUserService, UserService>();
         }
     }

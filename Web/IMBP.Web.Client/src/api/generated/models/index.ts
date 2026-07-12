@@ -7,4 +7,7 @@
 
 export * from "./authenticationRequest";
 export * from "./authenticationResponse";
+export * from "./getApiTranslationListParams";
+export * from "./okResult";
 export * from "./serviceError";
+export * from "./translationData";

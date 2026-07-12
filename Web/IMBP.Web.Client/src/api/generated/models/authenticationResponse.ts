@@ -6,5 +6,16 @@
  */
 
 export interface AuthenticationResponse {
-  [key: string]: unknown;
+  /** @nullable */
+  userName?: string | null;
+  /** @nullable */
+  firstName?: string | null;
+  /** @nullable */
+  middleName?: string | null;
+  /** @nullable */
+  lastName?: string | null;
+  /** @nullable */
+  fullName?: string | null;
+  /** @nullable */
+  token?: string | null;
 }

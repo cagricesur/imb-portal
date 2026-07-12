@@ -1,20 +1,28 @@
 import {
   FloatingLabelPasswordInput,
   FloatingLabelTextInput,
+  PortalLogo,
 } from "@imb-portal/components";
+import { PortalContants } from "@imb-portal/models";
 import {
   Button,
   Divider,
   Flex,
   Group,
-  Image,
   Paper,
   Stack,
   Switch,
   Title,
 } from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { useState } from "react";
+import { isNotEmpty, useForm } from "@mantine/form";
+import { useEffect, useState } from "react";
+import { useCookies } from "react-cookie";
+
+import { getUser, type ServiceError } from "@imb-portal/api";
+import { useAuthStore } from "@imb-portal/stores";
+import { useRouter } from "@tanstack/react-router";
+import type { AxiosError } from "axios";
+import dayjs from "dayjs";
 import classnames from "./index.module.scss";
 
 type LoginFormValues = {
@@ -25,21 +33,82 @@ type LoginFormValues = {
 
 const Login: React.FunctionComponent = () => {
   const [loading, setLoading] = useState<boolean>(false);
+  const signin = useAuthStore((state) => state.signin);
+  const authenticated = useAuthStore((state) => state.authenticated);
+  const router = useRouter();
+
+  const [cookies, setCookie, removeCookie] = useCookies([
+    PortalContants.CookieKeys.Authentication.UserName,
+    PortalContants.CookieKeys.Authentication.RememberMe,
+  ]);
+
+  useEffect(() => {
+    if (authenticated) {
+      router.navigate({ to: "/" });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authenticated]);
+
   const form = useForm<LoginFormValues>({
+    mode: "uncontrolled",
+    validateInputOnChange: true,
+    clearInputErrorOnChange: true,
     initialValues: {
-      username: "",
+      username:
+        cookies[PortalContants.CookieKeys.Authentication.RememberMe] &&
+        cookies[PortalContants.CookieKeys.Authentication.UserName]
+          ? cookies[PortalContants.CookieKeys.Authentication.UserName]
+          : "",
       password: "",
-      remember: false,
+      remember:
+        cookies[PortalContants.CookieKeys.Authentication.RememberMe] ?? false,
     },
     validate: {
-      username: (value) =>
-        value.trim().length > 0 ? null : "Username is required",
-      password: (value) => (value.length > 0 ? null : "Password is required"),
+      username: isNotEmpty("Username is required"),
+      password: isNotEmpty("Password is required"),
     },
   });
 
-  const handleSubmit = form.onSubmit(() => {
-    // TODO: wire up authentication
+  const handleSubmit = form.onSubmit((values) => {
+    setLoading(true);
+    const api = getUser();
+    api
+      .postApiUserAuthenticate({
+        userName: values.username,
+        password: values.password,
+      })
+      .then((response) => {
+        const authenticated = response && response.token;
+        if (authenticated) {
+          if (values.remember) {
+            const expires = dayjs().add(30, "day").toDate();
+            setCookie(
+              PortalContants.CookieKeys.Authentication.UserName,
+              values.username,
+              { path: "/", expires },
+            );
+            setCookie(
+              PortalContants.CookieKeys.Authentication.RememberMe,
+              values.remember,
+              { path: "/", expires },
+            );
+          } else {
+            removeCookie(PortalContants.CookieKeys.Authentication.UserName);
+            removeCookie(PortalContants.CookieKeys.Authentication.RememberMe);
+          }
+
+          signin(response);
+        }
+      })
+      .catch((error: AxiosError<ServiceError>) => {
+        if (error?.response?.data?.errorCode) {
+          form.resetField("password");
+          form.setFieldError("password", error.response.data.errorCode);
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   });
 
   return (
@@ -47,7 +116,7 @@ const Login: React.FunctionComponent = () => {
       <Paper radius="lg" shadow="xl" className={classnames.root}>
         <Stack align="stretch" gap={0}>
           <Group justify="center">
-            {/* <Image src={logo} h={64} w={64} alt="NoobzCord" /> */}
+            <PortalLogo />
           </Group>
           <Title>IMBP</Title>
 

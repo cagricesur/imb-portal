@@ -14,10 +14,17 @@ public partial class PortalContext : DbContext
     {
     }
 
+    public virtual DbSet<Translation> Translations { get; set; }
+
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Translation>(entity =>
+        {
+            entity.Property(e => e.ID).ValueGeneratedNever();
+        });
+
         modelBuilder.Entity<User>(entity =>
         {
             entity.Property(e => e.UID).ValueGeneratedNever();

@@ -6,5 +6,14 @@
  */
 
 export interface AuthenticationRequest {
-  [key: string]: unknown;
+  /**
+   * @minLength 0
+   * @maxLength 100
+   */
+  userName: string;
+  /**
+   * @minLength 0
+   * @maxLength 100
+   */
+  password: string;
 }
