@@ -48,13 +48,13 @@ const router = createRouter({
 
 const App: React.FunctionComponent = () => {
   const authState = useAuthStore();
-  const cs = useColorScheme();
+  const colorScheme = useColorScheme();
   const colorSchemeCookieManager = useColorSchemeCookieManager();
 
   return (
     <MantineProvider
       theme={theme}
-      defaultColorScheme={cs}
+      defaultColorScheme={colorScheme}
       colorSchemeManager={colorSchemeCookieManager}
     >
       <RouterProvider router={router} context={{ authState }} />
