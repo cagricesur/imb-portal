@@ -1,31 +1,40 @@
 import {
+  FloatingLabelPasswordInput,
+  FloatingLabelTextInput,
+} from "@imb-portal/components";
+import {
   Button,
+  Divider,
+  Flex,
+  Group,
+  Image,
   Paper,
-  PasswordInput,
   Stack,
-  TextInput,
+  Switch,
   Title,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-
-import classes from "./index.module.scss";
+import { useState } from "react";
+import classnames from "./index.module.scss";
 
 type LoginFormValues = {
   username: string;
   password: string;
+  remember: boolean;
 };
 
 const Login: React.FunctionComponent = () => {
+  const [loading, setLoading] = useState<boolean>(false);
   const form = useForm<LoginFormValues>({
     initialValues: {
       username: "",
       password: "",
+      remember: false,
     },
     validate: {
       username: (value) =>
         value.trim().length > 0 ? null : "Username is required",
-      password: (value) =>
-        value.length > 0 ? null : "Password is required",
+      password: (value) => (value.length > 0 ? null : "Password is required"),
     },
   });
 
@@ -34,47 +43,59 @@ const Login: React.FunctionComponent = () => {
   });
 
   return (
-    <div className={classes.page}>
-      <div aria-hidden className={classes.overlay} />
-      <Paper
-        className={classes.form}
-        component="section"
-        p={{ base: "md", sm: "xl" }}
-        radius="lg"
-        shadow="xl"
-        withBorder
-      >
-        <form onSubmit={handleSubmit}>
-          <Stack gap="md">
-            <Title order={2} ta="center">
-              Sign in
-            </Title>
+    <Flex className={classnames.screen}>
+      <Paper radius="lg" shadow="xl" className={classnames.root}>
+        <Stack align="stretch" gap={0}>
+          <Group justify="center">
+            {/* <Image src={logo} h={64} w={64} alt="NoobzCord" /> */}
+          </Group>
+          <Title>IMBP</Title>
 
-            <TextInput
-              autoComplete="username"
-              label="Username"
-              placeholder="Enter your username"
-              required
-              size="md"
-              {...form.getInputProps("username")}
-            />
+          <Divider my={32} />
 
-            <PasswordInput
-              autoComplete="current-password"
-              label="Password"
-              placeholder="Enter your password"
-              required
-              size="md"
-              {...form.getInputProps("password")}
-            />
+          <form onSubmit={handleSubmit}>
+            <Stack>
+              <FloatingLabelTextInput
+                label="Kullancı Adı"
+                placeholder="Kullancı Adı"
+                value={form.values.username}
+                onChange={(event) =>
+                  form.setFieldValue("username", event.currentTarget.value)
+                }
+                error={form.errors.username}
+                disabled={loading}
+                radius="md"
+              />
 
-            <Button fullWidth mt="xs" size="md" type="submit">
-              Login
-            </Button>
-          </Stack>
-        </form>
+              <FloatingLabelPasswordInput
+                label="Şifre"
+                placeholder="Şifre"
+                value={form.values.password}
+                onChange={(event) =>
+                  form.setFieldValue("password", event.currentTarget.value)
+                }
+                error={form.errors.password}
+                disabled={loading}
+                radius="md"
+              />
+
+              <Switch
+                label="Beni Hatırla"
+                checked={form.values.remember}
+                disabled={loading}
+                onChange={(event) => {
+                  form.setFieldValue("remember", event.currentTarget.checked);
+                }}
+              />
+
+              <Button type="submit" radius="md" loading={loading}>
+                Giriş Yap
+              </Button>
+            </Stack>
+          </form>
+        </Stack>
       </Paper>
-    </div>
+    </Flex>
   );
 };
 

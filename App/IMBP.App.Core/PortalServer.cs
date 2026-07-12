@@ -37,7 +37,6 @@ namespace IMBP.App.Core
 
             var app = builder.Build();
 
-            app.UseForwardedHeaders();
             app.UseDefaultFiles();
             app.MapStaticAssets();
 
@@ -48,16 +47,10 @@ namespace IMBP.App.Core
             }
 
             app.UseHttpsRedirection();
-
-            app.UseAuthentication();
             app.UseAuthorization();
-
             app.MapControllers();
-
             app.MapFallbackToFile("/index.html");
-
             app.Run();
-
         }
     }
 
@@ -79,9 +72,7 @@ namespace IMBP.App.Core
         {
             builder.Services
                    .AddSingleton<ICacheService, CacheService>()
-                   .AddScoped<IUserService, UserService>()
-                   .AddHttpContextAccessor()
-                   .AddSignalR();
+                   .AddScoped<IUserService, UserService>();
         }
     }
 }

@@ -16,6 +16,5 @@ namespace IMBP.Web.Server.Controllers
         {
             return userService.Authenticate(request).ToControllerResponse();
         }
-        
     }
 }
