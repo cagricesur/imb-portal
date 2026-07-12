@@ -12,6 +12,12 @@ namespace IMBP.App.Domain.Models
         [JsonIgnore]
         public string? ErrorCode { get; set; }
 
+        public void SetError(int statusCode, string errorCode)
+        {
+            StatusCode = statusCode;
+            ErrorCode = errorCode;
+        }
+
         public IActionResult ToControllerResponse()
         {
             return new ObjectResult(string.IsNullOrWhiteSpace(ErrorCode) ? this : new ServiceError(ErrorCode))
