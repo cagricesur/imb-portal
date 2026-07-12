@@ -1,6 +1,8 @@
 import {
+  ColorSchemeSwitcher,
   FloatingLabelPasswordInput,
   FloatingLabelTextInput,
+  LanguageSwitcher,
   PortalLogo,
 } from "@imb-portal/components";
 import { PortalContants } from "@imb-portal/models";
@@ -12,7 +14,7 @@ import {
   Paper,
   Stack,
   Switch,
-  Title,
+  Text,
 } from "@mantine/core";
 import { isNotEmpty, useForm } from "@mantine/form";
 import { useEffect, useState } from "react";
@@ -25,13 +27,13 @@ import type { AxiosError } from "axios";
 import dayjs from "dayjs";
 import classnames from "./index.module.scss";
 
-type LoginFormValues = {
+type AuthFormValues = {
   username: string;
   password: string;
   remember: boolean;
 };
 
-const Login: React.FunctionComponent = () => {
+const Auth: React.FunctionComponent = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const signin = useAuthStore((state) => state.signin);
   const authenticated = useAuthStore((state) => state.authenticated);
@@ -49,7 +51,7 @@ const Login: React.FunctionComponent = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authenticated]);
 
-  const form = useForm<LoginFormValues>({
+  const form = useForm<AuthFormValues>({
     mode: "uncontrolled",
     validateInputOnChange: true,
     clearInputErrorOnChange: true,
@@ -115,12 +117,23 @@ const Login: React.FunctionComponent = () => {
     <Flex className={classnames.screen}>
       <Paper radius="lg" shadow="xl" className={classnames.root}>
         <Stack align="stretch" gap={0}>
-          <Group justify="center">
+          <Stack align="center">
             <PortalLogo />
-          </Group>
-          <Title>IMBP</Title>
+            <Text className={classnames.brand}>IMB-P</Text>
+            <Text className={classnames.slogan} c="dimmed">
+              Internet & Mobile Banking Portal
+            </Text>
+          </Stack>
 
-          <Divider my={32} />
+          <Divider
+            my={32}
+            label={
+              <Group justify="center" gap={8}>
+                <LanguageSwitcher onChange={() => form.reset()} />
+                <ColorSchemeSwitcher />
+              </Group>
+            }
+          />
 
           <form onSubmit={handleSubmit}>
             <Stack>
@@ -148,18 +161,20 @@ const Login: React.FunctionComponent = () => {
                 radius="md"
               />
 
-              <Switch
-                label="Beni Hatırla"
-                checked={form.values.remember}
-                disabled={loading}
-                onChange={(event) => {
-                  form.setFieldValue("remember", event.currentTarget.checked);
-                }}
-              />
+              <Group justify="space-between">
+                <Switch
+                  label="Beni Hatırla"
+                  checked={form.values.remember}
+                  disabled={loading}
+                  onChange={(event) => {
+                    form.setFieldValue("remember", event.currentTarget.checked);
+                  }}
+                />
 
-              <Button type="submit" radius="md" loading={loading}>
-                Giriş Yap
-              </Button>
+                <Button type="submit" radius="md" loading={loading}>
+                  Giriş Yap
+                </Button>
+              </Group>
             </Stack>
           </form>
         </Stack>
@@ -168,4 +183,4 @@ const Login: React.FunctionComponent = () => {
   );
 };
 
-export default Login;
+export default Auth;

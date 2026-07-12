@@ -1,21 +1,11 @@
-import { createFileRoute } from "@tanstack/react-router";
+import Home from "@imb-portal/views/Home";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_protected/")({
-  component: RouteComponent,
+  component: Home,
+  beforeLoad(ctx) {
+    if (!ctx.context.authState.authenticated) {
+      throw redirect({ to: "/auth" });
+    }
+  },
 });
-
-function RouteComponent() {
-  const nav = Route.useNavigate();
-  return (
-    <div>
-      <span>Hello "/"!</span>
-      <button
-        onClick={() => {
-          nav({ to: "/login" });
-        }}
-      >
-        Logout
-      </button>
-    </div>
-  );
-}

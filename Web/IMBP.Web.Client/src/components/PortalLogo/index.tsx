@@ -1,18 +1,18 @@
-import { Image } from "@mantine/core";
-import { useColorScheme } from "@mantine/hooks";
+import { Image, useComputedColorScheme } from "@mantine/core";
 
 export const PortalLogo: React.FunctionComponent = () => {
-  const colorScheme = useColorScheme();
+  const colorScheme = useComputedColorScheme();
+
   return (
     <Image
       src={
-        colorScheme === "dark"
-          ? "/logo-white-96x96.png"
-          : "/logo-black-96x96.png"
+        colorScheme === "light"
+          ? "/logo-black-96x96.png"
+          : "/logo-white-96x96.png"
       }
-      h={64}
-      w={64}
-      alt="IMB-Portal"
+      h={96}
+      w={96}
+      alt="IMB Portal"
     />
   );
 };

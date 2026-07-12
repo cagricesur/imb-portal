@@ -21,8 +21,14 @@
   padding: clamp(24px, 4vw, 40px);
 
   .brand {
-    font-family: "Cherry Bomb One";
+    font-family: "Audiowide";
     font-size: clamp(32px, 7vw, 44px);
     line-height: 1.05;
+    color: #e20514;
+  }
+
+  .slogan {
+    font-family: "Exo";
+    font-weight: bold;
   }
 }
