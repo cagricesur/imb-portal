@@ -31,6 +31,5 @@ namespace IMBP.App.Domain.Contracts
                 return name;
             }
         }
-        public string? Token { get; set; }
     }
 }

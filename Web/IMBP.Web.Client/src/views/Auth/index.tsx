@@ -75,12 +75,15 @@ const Auth: React.FunctionComponent = () => {
     setLoading(true);
     const api = getUser();
     api
-      .postApiUserAuthenticate({
-        userName: values.username,
-        password: values.password,
-      })
+      .postApiUserAuthenticate(
+        {
+          userName: values.username,
+          password: values.password,
+        },
+        { rememberMe: values.remember },
+      )
       .then((response) => {
-        const authenticated = response && response.token;
+        const authenticated = response && response.userName;
         if (authenticated) {
           if (values.remember) {
             const expires = dayjs().add(30, "day").toDate();

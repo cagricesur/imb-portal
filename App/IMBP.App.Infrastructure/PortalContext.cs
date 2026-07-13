@@ -18,6 +18,8 @@ public partial class PortalContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
+    public virtual DbSet<UserSession> UserSessions { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Translation>(entity =>
@@ -28,6 +30,15 @@ public partial class PortalContext : DbContext
         modelBuilder.Entity<User>(entity =>
         {
             entity.Property(e => e.UID).ValueGeneratedNever();
+        });
+
+        modelBuilder.Entity<UserSession>(entity =>
+        {
+            entity.Property(e => e.SessionId).ValueGeneratedNever();
+            entity.HasOne(entity => entity.User)
+                .WithMany()
+                .HasForeignKey(entity => entity.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         OnModelCreatingPartial(modelBuilder);

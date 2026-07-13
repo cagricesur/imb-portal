@@ -1,17 +1,55 @@
-import type { IAuthStoreState } from "@imb-portal/models";
+import { getUser } from "@imb-portal/api";
+import type { IAuthStoreState, UserProfile } from "@imb-portal/models";
 import { create } from "zustand";
 
-export const useAuthStore = create<IAuthStoreState>((set) => ({
+const isAuthenticatedProfile = (data?: UserProfile) => {
+  return Boolean(data?.userName);
+};
+
+export const useAuthStore = create<IAuthStoreState>((set, get) => ({
   authenticated: false,
+  initialized: false,
+  data: undefined,
   signin(data) {
-    const { token, ...rest } = data;
-    const authenticated = token ? true : false;
     set({
-      data: authenticated ? { token, ...rest } : undefined,
-      authenticated,
+      data,
+      authenticated: isAuthenticatedProfile(data),
     });
   },
-  signout() {
-    set({ data: undefined, authenticated: false });
+  clearSession() {
+    set({
+      data: undefined,
+      authenticated: false,
+    });
+  },
+  async signout() {
+    try {
+      await getUser().postApiUserLogout();
+    } catch {
+      // Session may already be invalid; clear local state regardless.
+    }
+
+    get().clearSession();
+  },
+  async initialize() {
+    if (get().initialized) {
+      return;
+    }
+
+    try {
+      const profile = await getUser().getApiUserMe();
+      if (isAuthenticatedProfile(profile)) {
+        set({
+          data: profile,
+          authenticated: true,
+          initialized: true,
+        });
+        return;
+      }
+    } catch {
+      get().clearSession();
+    }
+
+    set({ initialized: true });
   },
 }));

@@ -2,11 +2,16 @@ import type { AuthenticationResponse } from "@imb-portal/api";
 
 export * from "./constants";
 
+export type UserProfile = Omit<AuthenticationResponse, "token">;
+
 export interface IAuthStoreState {
-  data?: AuthenticationResponse;
+  data?: UserProfile;
   authenticated: boolean;
-  signin: (data: AuthenticationResponse) => void;
-  signout: () => void;
+  initialized: boolean;
+  signin: (data: UserProfile) => void;
+  clearSession: () => void;
+  signout: () => Promise<void>;
+  initialize: () => Promise<void>;
 }
 
 export interface IAppState {

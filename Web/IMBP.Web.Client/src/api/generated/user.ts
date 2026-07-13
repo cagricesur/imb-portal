@@ -4,7 +4,11 @@
  * IMBP.Web.Server | v1
  * OpenAPI spec version: 1.0.0
  */
-import type { AuthenticationRequest, AuthenticationResponse } from "./models";
+import type {
+  AuthenticationRequest,
+  AuthenticationResponse,
+  PostApiUserAuthenticateParams,
+} from "./models";
 
 import { HttpService } from "../httpService";
 
@@ -13,6 +17,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 export const getUser = () => {
   const postApiUserAuthenticate = (
     authenticationRequest: AuthenticationRequest,
+    params?: PostApiUserAuthenticateParams,
     options?: SecondParameter<typeof HttpService<AuthenticationResponse>>,
   ) => {
     return HttpService<AuthenticationResponse>(
@@ -21,12 +26,51 @@ export const getUser = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         data: authenticationRequest,
+        params,
       },
       options,
     );
   };
-  return { postApiUserAuthenticate };
+  const postApiUserRefresh = (
+    options?: SecondParameter<typeof HttpService<AuthenticationResponse>>,
+  ) => {
+    return HttpService<AuthenticationResponse>(
+      { url: `/api/User/refresh`, method: "POST" },
+      options,
+    );
+  };
+  const postApiUserLogout = (
+    options?: SecondParameter<typeof HttpService<void>>,
+  ) => {
+    return HttpService<void>(
+      { url: `/api/User/logout`, method: "POST" },
+      options,
+    );
+  };
+  const getApiUserMe = (
+    options?: SecondParameter<typeof HttpService<AuthenticationResponse>>,
+  ) => {
+    return HttpService<AuthenticationResponse>(
+      { url: `/api/User/me`, method: "GET" },
+      options,
+    );
+  };
+  return {
+    postApiUserAuthenticate,
+    postApiUserRefresh,
+    postApiUserLogout,
+    getApiUserMe,
+  };
 };
 export type PostApiUserAuthenticateResult = NonNullable<
   Awaited<ReturnType<ReturnType<typeof getUser>["postApiUserAuthenticate"]>>
+>;
+export type PostApiUserRefreshResult = NonNullable<
+  Awaited<ReturnType<ReturnType<typeof getUser>["postApiUserRefresh"]>>
+>;
+export type PostApiUserLogoutResult = NonNullable<
+  Awaited<ReturnType<ReturnType<typeof getUser>["postApiUserLogout"]>>
+>;
+export type GetApiUserMeResult = NonNullable<
+  Awaited<ReturnType<ReturnType<typeof getUser>["getApiUserMe"]>>
 >;

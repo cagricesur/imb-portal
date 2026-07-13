@@ -9,5 +9,6 @@ export * from "./authenticationRequest";
 export * from "./authenticationResponse";
 export * from "./getApiTranslationListParams";
 export * from "./okResult";
+export * from "./postApiUserAuthenticateParams";
 export * from "./serviceError";
 export * from "./translationData";

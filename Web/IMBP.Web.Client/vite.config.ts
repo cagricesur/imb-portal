@@ -65,6 +65,7 @@ export default defineConfig({
       "^/api": {
         target,
         secure: false,
+        changeOrigin: true,
       },
     },
     port: parseInt(env.DEV_SERVER_PORT || "57453"),

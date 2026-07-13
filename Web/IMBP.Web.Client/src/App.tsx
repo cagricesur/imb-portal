@@ -1,10 +1,12 @@
 import { routeTree } from "@imb-portal/routeTree.gen";
+import { startSilentRefresh, stopSilentRefresh } from "@imb-portal/api/httpService";
 import { useAuthStore } from "@imb-portal/stores";
 import { theme } from "@imb-portal/theme";
 import { useColorSchemeCookieManager } from "@imb-portal/utils";
 import { LoadingOverlay, MantineProvider } from "@mantine/core";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { useColorScheme } from "@mantine/hooks";
+import { useEffect } from "react";
 
 import "@mantine/carousel/styles.css";
 import "@mantine/charts/styles.css";
@@ -50,6 +52,34 @@ const App: React.FunctionComponent = () => {
   const authState = useAuthStore();
   const colorScheme = useColorScheme();
   const colorSchemeCookieManager = useColorSchemeCookieManager();
+
+  useEffect(() => {
+    void useAuthStore.getState().initialize();
+  }, []);
+
+  useEffect(() => {
+    if (!authState.initialized || !authState.authenticated) {
+      stopSilentRefresh();
+      return;
+    }
+
+    startSilentRefresh();
+    return () => {
+      stopSilentRefresh();
+    };
+  }, [authState.authenticated, authState.initialized]);
+
+  if (!authState.initialized) {
+    return (
+      <MantineProvider
+        theme={theme}
+        defaultColorScheme={cs}
+        colorSchemeManager={colorSchemeCookieManager}
+      >
+        <PendingComponent />
+      </MantineProvider>
+    );
+  }
 
   return (
     <MantineProvider
