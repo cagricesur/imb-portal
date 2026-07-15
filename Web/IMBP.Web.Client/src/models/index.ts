@@ -5,8 +5,10 @@ export * from "./constants";
 export interface IAuthStoreState {
   data?: AuthenticationResponse;
   authenticated: boolean;
+  bootstrapped: boolean;
   signin: (data: AuthenticationResponse) => void;
   signout: () => void;
+  setBootstrapped: (bootstrapped: boolean) => void;
 }
 
 export interface IAppState {

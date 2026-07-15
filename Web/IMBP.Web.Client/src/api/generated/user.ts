@@ -25,8 +25,39 @@ export const getUser = () => {
       options,
     );
   };
-  return { postApiUserAuthenticate };
+
+  const postApiUserLogout = (
+    options?: SecondParameter<typeof HttpService<void>>,
+  ) => {
+    return HttpService<void>(
+      {
+        url: `/api/User/logout`,
+        method: "POST",
+      },
+      options,
+    );
+  };
+
+  const getApiUserMe = (
+    options?: SecondParameter<typeof HttpService<AuthenticationResponse>>,
+  ) => {
+    return HttpService<AuthenticationResponse>(
+      {
+        url: `/api/User/me`,
+        method: "GET",
+      },
+      options,
+    );
+  };
+
+  return { postApiUserAuthenticate, postApiUserLogout, getApiUserMe };
 };
 export type PostApiUserAuthenticateResult = NonNullable<
   Awaited<ReturnType<ReturnType<typeof getUser>["postApiUserAuthenticate"]>>
+>;
+export type PostApiUserLogoutResult = NonNullable<
+  Awaited<ReturnType<ReturnType<typeof getUser>["postApiUserLogout"]>>
+>;
+export type GetApiUserMeResult = NonNullable<
+  Awaited<ReturnType<ReturnType<typeof getUser>["getApiUserMe"]>>
 >;

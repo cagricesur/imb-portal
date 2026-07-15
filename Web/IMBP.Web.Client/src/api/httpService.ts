@@ -1,30 +1,23 @@
-import Axios, { type AxiosRequestConfig } from "axios";
+import Axios, { type AxiosError, type AxiosRequestConfig } from "axios";
 
 const httpService = Axios.create({
   baseURL: "",
+  withCredentials: true,
   headers: { "Content-Type": "application/json" },
 });
 
-// Add a request interceptor
-httpService.interceptors.request.use(
-  function (config) {
-    return config;
-  },
-  function (error) {
-    return Promise.reject(error);
-  },
-);
-
-// Add a response interceptor
 httpService.interceptors.response.use(
-  function (response) {
-    // Any status code that lie within the range of 2xx cause this function to trigger
-    // Do something with response data
-    return response;
-  },
-  function (error) {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
+  (response) => response,
+  (error: AxiosError) => {
+    const status = error.response?.status;
+    const url = error.config?.url ?? "";
+    const isAuthBootstrap =
+      url.includes("/api/User/authenticate") || url.includes("/api/User/me");
+
+    if (status === 401 && !isAuthBootstrap && typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("imb-portal:unauthorized"));
+    }
+
     return Promise.reject(error);
   },
 );

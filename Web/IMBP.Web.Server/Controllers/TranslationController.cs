@@ -1,12 +1,14 @@
 ﻿using IMBP.App.Core;
 using IMBP.App.Domain.Models;
 using IMBP.App.Domain.Specifications;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IMBP.Web.Server.Controllers
 {
     public class TranslationController(ITranslationService translationService) : PortalController
     {
+        [AllowAnonymous]
         [HttpGet]
         [Route("list")]
         [ProducesResponseType<List<TranslationData>>(StatusCodes.Status200OK)]

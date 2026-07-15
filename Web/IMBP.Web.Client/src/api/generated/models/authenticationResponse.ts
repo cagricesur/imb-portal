@@ -16,6 +16,4 @@ export interface AuthenticationResponse {
   lastName?: string | null;
   /** @nullable */
   fullName?: string | null;
-  /** @nullable */
-  token?: string | null;
 }

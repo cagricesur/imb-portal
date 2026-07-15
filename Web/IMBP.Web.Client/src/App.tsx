@@ -1,3 +1,4 @@
+import { getUser } from "@imb-portal/api";
 import { routeTree } from "@imb-portal/routeTree.gen";
 import { useAuthStore } from "@imb-portal/stores";
 import { theme } from "@imb-portal/theme";
@@ -5,6 +6,7 @@ import { useColorSchemeCookieManager } from "@imb-portal/utils";
 import { LoadingOverlay, MantineProvider } from "@mantine/core";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { useColorScheme } from "@mantine/hooks";
+import { useEffect } from "react";
 
 import "@mantine/carousel/styles.css";
 import "@mantine/charts/styles.css";
@@ -48,8 +50,51 @@ const router = createRouter({
 
 const App: React.FunctionComponent = () => {
   const authState = useAuthStore();
+  const signin = useAuthStore((state) => state.signin);
+  const signout = useAuthStore((state) => state.signout);
+  const bootstrapped = useAuthStore((state) => state.bootstrapped);
   const colorScheme = useColorScheme();
   const colorSchemeCookieManager = useColorSchemeCookieManager();
+
+  useEffect(() => {
+    const api = getUser();
+    api
+      .getApiUserMe()
+      .then((response) => {
+        if (response?.userName) {
+          signin(response);
+        } else {
+          signout();
+        }
+      })
+      .catch(() => {
+        signout();
+      });
+  }, [signin, signout]);
+
+  useEffect(() => {
+    const onUnauthorized = () => {
+      signout();
+      void router.navigate({ to: "/auth" });
+    };
+
+    window.addEventListener("imb-portal:unauthorized", onUnauthorized);
+    return () => {
+      window.removeEventListener("imb-portal:unauthorized", onUnauthorized);
+    };
+  }, [signout]);
+
+  if (!bootstrapped) {
+    return (
+      <MantineProvider
+        theme={theme}
+        defaultColorScheme={colorScheme}
+        colorSchemeManager={colorSchemeCookieManager}
+      >
+        <PendingComponent />
+      </MantineProvider>
+    );
+  }
 
   return (
     <MantineProvider

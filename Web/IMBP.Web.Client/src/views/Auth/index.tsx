@@ -80,27 +80,28 @@ const Auth: React.FunctionComponent = () => {
         password: values.password,
       })
       .then((response) => {
-        const authenticated = response && response.token;
-        if (authenticated) {
-          if (values.remember) {
-            const expires = dayjs().add(30, "day").toDate();
-            setCookie(
-              PortalContants.CookieKeys.Authentication.UserName,
-              values.username,
-              { path: "/", expires },
-            );
-            setCookie(
-              PortalContants.CookieKeys.Authentication.RememberMe,
-              values.remember,
-              { path: "/", expires },
-            );
-          } else {
-            removeCookie(PortalContants.CookieKeys.Authentication.UserName);
-            removeCookie(PortalContants.CookieKeys.Authentication.RememberMe);
-          }
-
-          signin(response);
+        if (!response?.userName) {
+          return;
         }
+
+        if (values.remember) {
+          const expires = dayjs().add(30, "day").toDate();
+          setCookie(
+            PortalContants.CookieKeys.Authentication.UserName,
+            values.username,
+            { path: "/", expires },
+          );
+          setCookie(
+            PortalContants.CookieKeys.Authentication.RememberMe,
+            values.remember,
+            { path: "/", expires },
+          );
+        } else {
+          removeCookie(PortalContants.CookieKeys.Authentication.UserName);
+          removeCookie(PortalContants.CookieKeys.Authentication.RememberMe);
+        }
+
+        signin(response);
       })
       .catch((error: AxiosError<ServiceError>) => {
         if (error?.response?.data?.errorCode) {
