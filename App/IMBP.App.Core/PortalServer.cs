@@ -66,7 +66,7 @@ namespace IMBP.App.Core
         internal static void ConfigurePortalSettings(this WebApplicationBuilder builder)
         {
             builder.Services.AddMemoryCache(options => builder.Configuration.GetSection("MemoryCache").Bind(options));
-            builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection(JwtSettings.Section));
+            builder.Services.Configure<ApplicationSettings>(builder.Configuration.GetSection(ApplicationSettings.Section));
         }
         internal static void ConfigurePortalServices(this WebApplicationBuilder builder)
         {

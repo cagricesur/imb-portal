@@ -19,7 +19,15 @@
    "T4TemplatePath": null,
    "Tables": [
       {
+         "Name": "[dbo].[Applications]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[Translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[UserRoles]",
          "ObjectType": 0
       },
       {

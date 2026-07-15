@@ -4,6 +4,6 @@ namespace IMBP.App.Domain.Specifications
 {
     public interface IUserService
     {
-        Task<AuthenticationResponse> Authenticate(AuthenticationRequest request);
+        Task<AuthenticationResponse> Authenticate(AuthenticationRequest request, CancellationToken cancellationToken);
     }
 }

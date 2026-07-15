@@ -1,13 +1,16 @@
 ﻿using IMBP.App.Domain.Models;
+using IMBP.App.Domain.Settings;
 using IMBP.App.Domain.Specifications;
 using IMBP.App.Infrastructure;
 using IMBP.App.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace IMBP.App.Core.Services
 {
-    public class TranslationService(PortalContext context, ICacheService cacheService) : ITranslationService
+    public class TranslationService(PortalContext context, ICacheService cacheService, IOptions<ApplicationSettings> appOptions) : ITranslationService
     {
+        private readonly ApplicationSettings appSettings = appOptions.Value;
         private string GetTranslationsCacheKey(string language)
         {
             return string.Join(".", nameof(TranslationService), language);
@@ -29,11 +32,11 @@ namespace IMBP.App.Core.Services
             {
                 return (await context.Translations
                                  .AsNoTracking()
-                                 .Where(entity => entity.Language == language)
+                                 .Where(entity => entity.ApplicationUID == appSettings.UID && entity.Language == language)
                                  .ToListAsync(cancellationToken: cancellationToken))
                                  .Select(entity => new TranslationData()
                                  {
-                                     ID = entity.ID,
+                                     UID = entity.UID,
                                      Name = entity.Name,
                                      Value = entity.Value,
                                      Language = entity.Language
@@ -54,7 +57,8 @@ namespace IMBP.App.Core.Services
                 {
                     await context.Translations.AddAsync(new Translation
                     {
-                        ID = Guid.NewGuid(),
+                        UID = Guid.NewGuid(),
+                        ApplicationUID = appSettings.UID,
                         Name = translation.Name,
                         Language = translation.Language,
                         Value = translation.Value,

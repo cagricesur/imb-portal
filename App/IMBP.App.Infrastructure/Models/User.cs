@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace IMBP.App.Infrastructure.Models;
 
-[Index("UID", Name = "IX_Users")]
 public partial class User
 {
     [Key]
@@ -40,4 +39,7 @@ public partial class User
     public byte Role { get; set; }
 
     public byte Status { get; set; }
+
+    [InverseProperty("UserU")]
+    public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 }

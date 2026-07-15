@@ -12,9 +12,9 @@ namespace IMBP.Web.Server.Controllers
         [Route("authenticate")]
         [ProducesResponseType<ServiceError>(StatusCodes.Status400BadRequest)]
         [ProducesResponseType<AuthenticationResponse>(StatusCodes.Status200OK)]
-        public Task<IActionResult> Authenticate(AuthenticationRequest request)
+        public Task<IActionResult> Authenticate(AuthenticationRequest request, CancellationToken cancellationToken)
         {
-            return userService.Authenticate(request).ToControllerResponse();
+            return userService.Authenticate(request, cancellationToken).ToControllerResponse();
         }
     }
 }

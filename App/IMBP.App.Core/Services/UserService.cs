@@ -5,7 +5,7 @@ namespace IMBP.App.Core.Services
 {
     internal class UserService : IUserService
     {
-        public Task<AuthenticationResponse> Authenticate(AuthenticationRequest request)
+        public Task<AuthenticationResponse> Authenticate(AuthenticationRequest request, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

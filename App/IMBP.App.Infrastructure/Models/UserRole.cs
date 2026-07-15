@@ -8,21 +8,22 @@ using Microsoft.EntityFrameworkCore;
 
 namespace IMBP.App.Infrastructure.Models;
 
-[Index("ApplicationUID", "Language", Name = "IX_Translations_AppUID_Language")]
-[Index("ApplicationUID", "Name", "Language", Name = "UK_Translations_AppUID_Name_Language", IsUnique = true)]
-public partial class Translation
+public partial class UserRole
 {
     [Key]
     public Guid UID { get; set; }
 
+    public Guid UserUID { get; set; }
+
     public Guid ApplicationUID { get; set; }
 
-    [StringLength(250)]
-    public string Name { get; set; } = null!;
+    public byte Role { get; set; }
 
-    [StringLength(5)]
-    [Unicode(false)]
-    public string Language { get; set; } = null!;
+    [ForeignKey("ApplicationUID")]
+    [InverseProperty("UserRoles")]
+    public virtual Application ApplicationU { get; set; } = null!;
 
-    public string Value { get; set; } = null!;
+    [ForeignKey("UserUID")]
+    [InverseProperty("UserRoles")]
+    public virtual User UserU { get; set; } = null!;
 }

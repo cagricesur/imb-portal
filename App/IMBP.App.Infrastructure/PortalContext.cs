@@ -14,20 +14,42 @@ public partial class PortalContext : DbContext
     {
     }
 
+    public virtual DbSet<Application> Applications { get; set; }
+
     public virtual DbSet<Translation> Translations { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
+    public virtual DbSet<UserRole> UserRoles { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Application>(entity =>
+        {
+            entity.Property(e => e.UID).ValueGeneratedNever();
+        });
+
         modelBuilder.Entity<Translation>(entity =>
         {
-            entity.Property(e => e.ID).ValueGeneratedNever();
+            entity.Property(e => e.UID).ValueGeneratedNever();
         });
 
         modelBuilder.Entity<User>(entity =>
         {
             entity.Property(e => e.UID).ValueGeneratedNever();
+        });
+
+        modelBuilder.Entity<UserRole>(entity =>
+        {
+            entity.Property(e => e.UID).ValueGeneratedNever();
+
+            entity.HasOne(d => d.ApplicationU).WithMany(p => p.UserRoles)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UserRoles_Applications");
+
+            entity.HasOne(d => d.UserU).WithMany(p => p.UserRoles)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UserRoles_Users");
         });
 
         OnModelCreatingPartial(modelBuilder);
